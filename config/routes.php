@@ -18,6 +18,12 @@ use App\Action\Event\EventsAction;
 use App\Action\Event\CreateEventAction;
 use App\Action\Event\DeleteEventAction;
 use App\Action\Event\EventsForUserAction;
+use App\Action\Event\TodayEventsAction;
+use App\Action\Event\UserTodayEventsAction;
+use App\Action\Event\PastEventsAction;
+use App\Action\Event\UserPastEventsAction;
+use App\Action\Event\ComingEventsAction;
+use App\Action\Event\UserComingEventsAction;
 use App\Action\Photo\GetActivePhotoAction;
 use App\Action\Photo\AddPhotoAction;
 use App\Action\Photo\PhotoAction;
@@ -53,6 +59,12 @@ return function (App $app) {
     $app->post('/users/{id}/events', CreateEventAction::class);
     $app->put('/events/{id}', EditEventAction::class);
     $app->delete('/events/{id}', DeleteEventAction::class);
+    $app->get('/past-events', PastEventsAction::class);
+    $app->get('/coming-events', ComingEventsAction::class);
+    $app->get('/today-events', TodayEventsAction::class);
+    $app->get('/users/{id}/past-events', UserPastEventsAction::class);
+    $app->get('/users/{id}/coming-events', UserComingEventsAction::class);
+    $app->get('/users/{id}/today-events', UserTodayEventsAction::class);
 
     $app->get('/photos', PhotosAction::class);
     $app->get('/photos/{id}', PhotoAction::class);

@@ -49,9 +49,7 @@ final class InvitationRepository extends Repository
             {
                 if($stmt->execute())
                 {
-                    $id = $this->connection->lastInsertId();
-                    $sql = "SELECT * FROM invitations where id = $id LIMIT 1";
-                    return $this->connection->query($sql)->fetchAll();
+                    return $this->connection->lastInsertId();
                 }
                 else
                 {

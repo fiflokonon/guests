@@ -116,11 +116,7 @@ final class UserRepository extends Repository
         }
     }
 
-    /**
-     * @param int $id
-     * @return array|mixed
-     */
-    public function user(int $id): mixed
+    public function user(int $id)
     {
         return $this->getOne('utilisateurs', $id);
     }

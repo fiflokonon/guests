@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use PDO;
 use Slim\Exception\HttpException;
 
+
     /*************************************************
      * ICI - LA CLASSE PARENT DE REPOSITORY***********
      *************************************************/
@@ -17,6 +18,8 @@ class Repository
      * @var PDO
      */
     protected PDO $connection;
+
+    protected $cipher = "aes-256-cbc";
 
     /**
      * @param PDO $connection
@@ -58,7 +61,7 @@ class Repository
      * @param int $id
      * @return array|mixed
      */
-    public function getOne(string $table, int $id): mixed
+    public function getOne(string $table, int $id)
     {
         $sql = "SELECT * FROM $table WHERE id = $id LIMIT 1";
         try
@@ -146,6 +149,23 @@ class Repository
             $response->getBody()->write($errorMessage);
             return $response;
         }
+    }
+
+    public function aesEncrypt(int $data)
+    {
+        //Generate a 256-bit encryption key
+        $encryption_key = openssl_random_pseudo_bytes(32);
+        $iv_size = openssl_cipher_iv_length($this->cipher);
+        $iv = openssl_random_pseudo_bytes($iv_size);
+        return openssl_encrypt($data, $this->cipher, $encryption_key, 0, $iv);
+    }
+
+    public function aesDecrypt(string $encrypted)
+    {
+        $encryption_key = openssl_random_pseudo_bytes(32);
+        $iv_size = openssl_cipher_iv_length($this->cipher);
+        $iv = openssl_random_pseudo_bytes($iv_size);
+        return openssl_decrypt($encrypted, $this->cipher, $encryption_key, 0, $iv);
     }
 
 }

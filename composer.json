@@ -6,7 +6,9 @@
         "php-di/php-di": "^6.4",
         "robmorgan/phinx": "^0.12.12",
         "firebase/php-jwt": "^6.3",
-      "ext-pdo": "*"
+      "ext-pdo": "*",
+        "endroid/qr-code": "^4.6",
+      "ext-openssl": "*"
     },
     "autoload": {
         "psr-4": {
