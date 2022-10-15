@@ -30,19 +30,17 @@ final class InvitationRepository extends Repository
         return $this->getOne('invitations', $id);
     }
 
-    public function createInvitation(int $id, array $invitation, $lien)
+    public function createInvitation(int $id, array $invitation)
     {
-        $nomPrenoms = htmlspecialchars($invitation['nom_prenoms']);
-        $nombre = htmlspecialchars($invitation['nombre']);
+        $nom_prenoms = htmlspecialchars($invitation['nom_prenoms']);
+        $place = htmlspecialchars($invitation['place']);
         $id_evenement = $id;
-        $lien_code = htmlspecialchars($lien);
-        $sql = "INSERT INTO invitations(nomPrenoms, nombre, id_evenement, lien_code) VALUES (:nomPrenoms, :nombre, :id_evenement, :lien_code)";
+        $sql = "INSERT INTO invitations(nom_prenoms, place, id_evenement) VALUES (:nom_prenoms, :place, :id_evenement)";
         $stmt = $this->connection->prepare($sql);
-        $stmt->bindValue('nomPrenoms', $nomPrenoms);
-        $stmt->bindValue('nombre', $nombre);
+        $stmt->bindValue('nom_prenoms', $nom_prenoms);
+        $stmt->bindValue('place', $place);
         $stmt->bindValue('id_evenement', $id_evenement);
-        $stmt->bindValue('lien_code', $lien_code);
-        $green = $this->checkNom($nomPrenoms);
+        $green = $this->checkNom($nom_prenoms);
         if ($green)
         {
             try
@@ -68,6 +66,12 @@ final class InvitationRepository extends Repository
         }
     }
 
+    public function insertLink(int $id, string $lien)
+    {
+        $sql = "UPDATE evenements SET lien_code = $lien WHERE id = $id";
+        $stmt = $this->connection->prepare($sql);
+        return $this->exeStatement($stmt, ['success' => true]);
+    }
     /**
      * @param int $id
      * @return false|mixed|string

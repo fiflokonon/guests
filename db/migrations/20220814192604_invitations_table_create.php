@@ -19,15 +19,15 @@ final class InvitationsTableCreate extends AbstractMigration
     public function up()
     {
         $this->table('invitations')
-            ->addColumn('nomPrenoms', 'string', ['limit' => 100])
+            ->addColumn('nom_prenoms', 'string', ['limit' => 100])
             ->addColumn('id_evenement', 'integer')
-            ->addColumn('nombre', 'integer', ['limit' => 50])
+            ->addColumn('place', 'integer', ['limit' => 50])
             ->addColumn('lien_carte', 'string', ['default' => null])
             ->addColumn('lien_code', 'string', ['default' => null])
             ->addColumn('retour', 'boolean')
             ->addColumn('statut_envoye', 'boolean', ['default' => false])
             ->addColumn('created_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
-            ->addIndex('nomPrenoms', ['unique' => true])
+            ->addIndex('nom_prenoms', ['unique' => true])
             ->addIndex('lien_code', ['unique' => true])
             ->addIndex('lien_carte', ['unique' => true])
             ->addForeignKey('id_evenement', 'evenements', 'id',
