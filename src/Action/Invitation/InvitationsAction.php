@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Action\Event;
+namespace App\Action\Invitation;
 
-use App\Domain\Event\Service\TodayEventsService;
+use App\Domain\Invitation\Service\InvitationsService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class TodayEventsAction
+final class InvitationsAction
 {
     /**
-     * @var TodayEventsService
+     * @var InvitationsService
      */
-    private TodayEventsService $service;
+    private InvitationsService $service;
 
-    public function __construct(TodayEventsService $service)
+    public function __construct(InvitationsService $service)
     {
         $this->service = $service;
     }
@@ -24,7 +24,7 @@ final class TodayEventsAction
     ): ResponseInterface
     {
         //TODO:Invoke
-        $result = $this->service->getToday();
+        $result = $this->service->getInvitations();
 
         //Build HTTP Response
         $response->getBody()->write(json_encode($result));

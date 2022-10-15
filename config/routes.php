@@ -31,6 +31,11 @@ use App\Action\Photo\PhotosAction;
 use App\Action\Photo\UpdatePhotoAction;
 use App\Action\Photo\UserPhotosAction;
 use App\Action\Photo\DeletePhotoAction;
+use App\Action\Invitation\CreateInvitationAction;
+use App\Action\Invitation\DeleteInvitationAction;
+use App\Action\Invitation\InvitationAction;
+use App\Action\Invitation\InvitationsAction;
+use App\Action\Invitation\EventInvitationsAction;
 
 return function (App $app) {
     $app->get('/', function (
@@ -73,4 +78,10 @@ return function (App $app) {
     $app->put('/photos/{id}', UpdatePhotoAction::class);
     $app->delete('/photos/{id}', DeletePhotoAction::class);
     $app->post('/users/{id}/photos', AddPhotoAction::class);
+
+    $app->post('/events/{id}/invitations', CreateInvitationAction::class);
+    $app->get('/invitations-list', InvitationsAction::class);
+    $app->get('/events/{id}/invitations', EventInvitationsAction::class);
+    $app->get('/invitations/{id}', InvitationAction::class);
+    $app->delete('/invitations/{id}', DeleteInvitationAction::class);
 };

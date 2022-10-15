@@ -39,42 +39,49 @@ final class EventRepository
         $date_de_debut = htmlspecialchars($event['date_de_debut']);
         $date_de_fin = htmlspecialchars($event['date_de_fin']);
         $id_utilisateur = $id;
-        if((time()-(60*60*24)) < strtotime($date_de_debut) && (time()-(60*60*24)) < strtotime($date_de_fin))
+        if(strtotime($date_de_debut) >= (time()-(60*60*24)) && strtotime($date_de_fin) >= (time()-(60*60*24)))
         {
-            $sql = "INSERT INTO evenements(titre, slogan, description, lieu, date_de_debut, date_de_fin, id_utilisateur) VALUES (:titre, :slogan, :description, :lieu, :date_de_debut, :date_de_fin, :id_utilisateur)";
-            $stmt = $this->connection->prepare($sql);
-            $stmt->bindValue('titre', $titre);
-            $stmt->bindValue('slogan', $slogan);
-            $stmt->bindValue('description', $description);
-            $stmt->bindValue('lieu', $lieu);
-            $stmt->bindValue('date_de_debut', $date_de_debut);
-            $stmt->bindValue('date_de_fin', $date_de_fin);
-            $stmt->bindValue('id_utilisateur', $id_utilisateur);
-            $green = $this->checkSlogan($slogan);
-            if ($green)
+            if (strtotime($date_de_fin) >= strtotime($date_de_debut))
             {
-                try
+                $sql = "INSERT INTO evenements(titre, slogan, description, lieu, date_de_debut, date_de_fin, id_utilisateur) VALUES (:titre, :slogan, :description, :lieu, :date_de_debut, :date_de_fin, :id_utilisateur)";
+                $stmt = $this->connection->prepare($sql);
+                $stmt->bindValue('titre', $titre);
+                $stmt->bindValue('slogan', $slogan);
+                $stmt->bindValue('description', $description);
+                $stmt->bindValue('lieu', $lieu);
+                $stmt->bindValue('date_de_debut', $date_de_debut);
+                $stmt->bindValue('date_de_fin', $date_de_fin);
+                $stmt->bindValue('id_utilisateur', $id_utilisateur);
+                $green = $this->checkSlogan($slogan);
+                if ($green)
                 {
-                    if($stmt->execute())
+                    try
                     {
-                        $id = $this->connection->lastInsertId();
-                        $sql = "SELECT * FROM evenements where id = $id LIMIT 1";
-                        return $this->connection->query($sql)->fetchAll();
+                        if($stmt->execute())
+                        {
+                            $id = $this->connection->lastInsertId();
+                            $sql = "SELECT * FROM evenements where id = $id LIMIT 1";
+                            return $this->connection->query($sql)->fetchAll();
+                        }
+                        else
+                        {
+                            return ['message' => "An error occurs"];
+                        }
                     }
-                    else
+                    catch (HttpException $exception)
                     {
-                        return ['message' => "An error occurs"];
+                        $errorMessage = sprintf('%s %s', $statusCode, $response->getReasonPhrase());
+                        return ["message" => $errorMessage];
                     }
                 }
-                catch (HttpException $exception)
+                else
                 {
-                    $errorMessage = sprintf('%s %s', $statusCode, $response->getReasonPhrase());
-                    return ["message" => $errorMessage];
+                    return ['message' => "That slogan had already existed", "Astuce" => "Change slogan Please"];
                 }
             }
             else
             {
-                return ['message' => "That slogan had already existed", "Astuce" => "Change slogan Please"];
+                return ["message" => "Erreur de concordance des dates"];
             }
         }
         else
@@ -105,7 +112,7 @@ final class EventRepository
      * @param int $id
      * @return array|mixed
      */
-    public function event(int $id): mixed
+    public function event(int $id)
     {
         $sql = "SELECT * FROM evenements where id = $id LIMIT 1";
         try
@@ -151,7 +158,7 @@ final class EventRepository
 
     public function pastEvents()
     {
-        $sql = "SELECT * FROM evenements WHERE date_de_debut < now()";
+        $sql = "SELECT * FROM evenements WHERE date_de_debut < CAST(NOW() as date)";
         try {
            return $this->connection->query($sql)->fetchAll();
         }catch (\Exception $exception)
@@ -162,7 +169,7 @@ final class EventRepository
 
     public function userPastEvents(int $id)
     {
-        $sql = "SELECT * FROM evenements WHERE date_de_fin < now() AND id_utilisateur = $id";
+        $sql = "SELECT * FROM evenements WHERE date_de_fin < CAST(NOW() as date) AND id_utilisateur = $id";
         try {
             return $this->connection->query($sql)->fetchAll();
         }catch (\Exception $exception)
@@ -173,7 +180,7 @@ final class EventRepository
 
     public function comingEvents()
     {
-        $sql = "SELECT * FROM evenements WHERE date_de_debut > now()";
+        $sql = "SELECT * FROM evenements WHERE date_de_debut > CAST(NOW() as date)";
         try {
             return $this->connection->query($sql)->fetchAll();
         }catch (\Exception $exception)
@@ -184,7 +191,7 @@ final class EventRepository
 
     public function userComingEvents(int $id)
     {
-        $sql = "SELECT * FROM evenements WHERE date_de_debut > now() AND id_utilisateur = $id";
+        $sql = "SELECT * FROM evenements WHERE date_de_debut > CAST(NOW() as date) AND id_utilisateur = $id";
         try {
             return $this->connection->query($sql)->fetchAll();
         }catch (\Exception $exception)
@@ -195,7 +202,7 @@ final class EventRepository
 
     public function todayEvents()
     {
-        $sql = "SELECT * FROM evenements WHERE date_de_debut = now()";
+        $sql = "SELECT * FROM evenements WHERE date_de_debut = CAST(NOW() as date) OR date_de_fin = CAST(NOW() as date)";
         try {
             return $this->connection->query($sql)->fetchAll();
         }catch (\Exception $exception)
@@ -206,7 +213,7 @@ final class EventRepository
 
     public function userTodayEvents(int $id)
     {
-        $sql = "SELECT * FROM evenements WHERE date_de_debut = now() AND id_utilisateur = $id";
+        $sql = "SELECT * FROM evenements WHERE date_de_debut = CAST(NOW() as date) AND id_utilisateur = $id";
         try {
             return $this->connection->query($sql)->fetchAll();
         }catch (\Exception $exception)

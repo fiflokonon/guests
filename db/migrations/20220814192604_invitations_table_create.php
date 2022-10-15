@@ -22,14 +22,12 @@ final class InvitationsTableCreate extends AbstractMigration
             ->addColumn('nom_prenoms', 'string', ['limit' => 100])
             ->addColumn('id_evenement', 'integer')
             ->addColumn('place', 'integer', ['limit' => 50])
-            ->addColumn('lien_carte', 'string', ['default' => null])
-            ->addColumn('lien_code', 'string', ['default' => null])
-            ->addColumn('retour', 'boolean')
+            ->addColumn('lien_carte', 'string', ['null' => true])
+            ->addColumn('lien_code', 'string', ['null' => true])
+            ->addColumn('retour', 'boolean',['default' => false])
             ->addColumn('statut_envoye', 'boolean', ['default' => false])
             ->addColumn('created_at', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
             ->addIndex('nom_prenoms', ['unique' => true])
-            ->addIndex('lien_code', ['unique' => true])
-            ->addIndex('lien_carte', ['unique' => true])
             ->addForeignKey('id_evenement', 'evenements', 'id',
                 ['delete' => 'NO_ACTION', 'update' => 'CASCADE'])
             ->create();

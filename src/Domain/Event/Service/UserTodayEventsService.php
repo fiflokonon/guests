@@ -11,18 +11,11 @@ final class UserTodayEventsService
      */
     private EventRepository $repository;
 
-    /**
-     * @param EventRepository $repository
-     */
-    private function __construct(EventRepository $repository)
+    public function __construct(EventRepository $repository)
     {
         $this->repository = $repository;
     }
 
-    /**
-     * @param int $id
-     * @return mixed
-     */
     public function userTodays(int $id)
     {
         return $this->repository->userTodayEvents($id);

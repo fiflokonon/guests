@@ -19,8 +19,6 @@ class Repository
      */
     protected PDO $connection;
 
-    protected $cipher = "aes-256-cbc";
-
     /**
      * @param PDO $connection
      */
@@ -91,7 +89,7 @@ class Repository
      * @param $response
      * @return false|mixed|string
      */
-    public function exeStatement($stmt, $response): mixed
+    public function exeStatement($stmt, $response)
     {
         try {
             if ($stmt->execute()) {
@@ -151,21 +149,26 @@ class Repository
         }
     }
 
-    public function aesEncrypt(int $data)
+    public function aesEncrypt(int $data):string
     {
-        //Generate a 256-bit encryption key
+//Define cipher
+        $cipher = "aes-256-cbc";
+//Generate a 256-bit encryption key
         $encryption_key = openssl_random_pseudo_bytes(32);
-        $iv_size = openssl_cipher_iv_length($this->cipher);
+// Generate an initialization vector
+        $iv_size = openssl_cipher_iv_length($cipher);
         $iv = openssl_random_pseudo_bytes($iv_size);
-        return openssl_encrypt($data, $this->cipher, $encryption_key, 0, $iv);
+//Data to encrypt
+        return openssl_encrypt($data, $cipher, $encryption_key, 0, $iv);
     }
 
     public function aesDecrypt(string $encrypted)
     {
+        $cipher = "aes-256-cbc";
         $encryption_key = openssl_random_pseudo_bytes(32);
-        $iv_size = openssl_cipher_iv_length($this->cipher);
+        $iv_size = openssl_cipher_iv_length($cipher);
         $iv = openssl_random_pseudo_bytes($iv_size);
-        return openssl_decrypt($encrypted, $this->cipher, $encryption_key, 0, $iv);
+        return openssl_decrypt($encrypted, $cipher, $encryption_key, 0, $iv);
     }
 
 }

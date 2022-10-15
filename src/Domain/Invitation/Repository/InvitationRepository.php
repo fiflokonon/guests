@@ -16,7 +16,7 @@ final class InvitationRepository extends Repository
     /**
      * @return array|false
      */
-    public function invitations(): bool|array
+    public function invitations()
     {
         return $this->getAll('invitations');
     }
@@ -66,9 +66,23 @@ final class InvitationRepository extends Repository
         }
     }
 
+    /**
+     * @param int $id
+     * @return array|false|mixed|string
+     */
+    public function eventInvitations(int $id)
+    {
+        $sql = "SELECT * FROM invitations WHERE id_evenement = $id";
+        return $this->connection->query($sql)->fetchAll();
+    }
+    /**
+     * @param int $id
+     * @param string $lien
+     * @return array|false|mixed|string
+     */
     public function insertLink(int $id, string $lien)
     {
-        $sql = "UPDATE evenements SET lien_code = $lien WHERE id = $id";
+        $sql = "UPDATE invitations SET lien_code = '$lien' WHERE id = $id";
         $stmt = $this->connection->prepare($sql);
         return $this->exeStatement($stmt, ['success' => true]);
     }
@@ -87,7 +101,7 @@ final class InvitationRepository extends Repository
      */
     public function checkNom(string $nom)
     {
-        $sql = "SELECT * from invitations WHERE nomPrenoms = '$nom'";
+        $sql = "SELECT * from invitations WHERE nom_prenoms = '$nom'";
         $result = $this->connection->query($sql)->fetchAll();
         if ($result)
             return false;
