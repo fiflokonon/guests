@@ -24,6 +24,9 @@ final class CreateInvitationService
 
     public function generateCode(string $data, int $id)
     {
+        /**
+         * Réf: https://code-boxx.com/generate-qr-code-php/
+         */
         $qr = QrCode::create($data);
         $qr->setForegroundColor(new Color(255, 255, 255))
             ->setBackgroundColor(new Color(25, 23, 61));
