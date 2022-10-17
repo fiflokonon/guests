@@ -54,7 +54,6 @@ final class AddPhotoAction
         }
         $response->getBody()->write(json_encode($files));
         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-
     }
 
     /**

@@ -3,6 +3,7 @@
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
+use Slim\Routing\RouteCollectorProxy;
 use App\Action\User\RegisterAction;
 use App\Action\User\LoginAction;
 use App\Action\User\UsersAction;
@@ -49,39 +50,48 @@ return function (App $app) {
      ************  ROUTES   ***************************
      **************************************************/
 
+    /** ROUTES WITHOUT AUTHENTIFICATION */
+
     $app->post('/register', RegisterAction::class);
     $app->post('/login', LoginAction::class);
-    $app->get('/users/me', GetMeAction::class);
-    $app->get('/users', UsersAction::class);
-    $app->get('/users/{id}', UserAction::class);
-    $app->put('/users/{id}/change-status', ChangeStatusAction::class);
-    $app->put('/users/{id}/edit',EditUserAction::class);
-    $app->delete('/users/{id}/delete', DeleteUserAction::class);
 
-    $app->get('/events', EventsAction::class);
-    $app->get('/events/{id}', EventAction::class);
-    $app->get('/users/{id}/events', EventsForUserAction::class);
-    $app->post('/users/{id}/events', CreateEventAction::class);
-    $app->put('/events/{id}', EditEventAction::class);
-    $app->delete('/events/{id}', DeleteEventAction::class);
-    $app->get('/past-events', PastEventsAction::class);
-    $app->get('/coming-events', ComingEventsAction::class);
-    $app->get('/today-events', TodayEventsAction::class);
-    $app->get('/users/{id}/past-events', UserPastEventsAction::class);
-    $app->get('/users/{id}/coming-events', UserComingEventsAction::class);
-    $app->get('/users/{id}/today-events', UserTodayEventsAction::class);
+    /** ROUTES WITH AUTHENTIFICATION  */
+    $app->group('/api', function (RouteCollectorProxy $app)
+    {
+        $app->get('/users/me', GetMeAction::class);
+        $app->get('/users', UsersAction::class);
+        $app->get('/users/{id}', UserAction::class);
+        $app->put('/users/{id}/change-status', ChangeStatusAction::class);
+        $app->put('/users/{id}/edit',EditUserAction::class);
+        $app->delete('/users/{id}/delete', DeleteUserAction::class);
 
-    $app->get('/photos', PhotosAction::class);
-    $app->get('/photos/{id}', PhotoAction::class);
-    $app->get('/users/{id}/active-photo', GetActivePhotoAction::class);
-    $app->get('/users/{id}/photos', UserPhotosAction::class);
-    $app->put('/photos/{id}', UpdatePhotoAction::class);
-    $app->delete('/photos/{id}', DeletePhotoAction::class);
-    $app->post('/users/{id}/photos', AddPhotoAction::class);
+        $app->get('/events', EventsAction::class);
+        $app->get('/events/{id}', EventAction::class);
+        $app->get('/users/{id}/events', EventsForUserAction::class);
+        $app->post('/users/{id}/events', CreateEventAction::class);
+        $app->put('/events/{id}', EditEventAction::class);
+        $app->delete('/events/{id}', DeleteEventAction::class);
+        $app->get('/past-events', PastEventsAction::class);
+        $app->get('/coming-events', ComingEventsAction::class);
+        $app->get('/today-events', TodayEventsAction::class);
+        $app->get('/users/{id}/past-events', UserPastEventsAction::class);
+        $app->get('/users/{id}/coming-events', UserComingEventsAction::class);
+        $app->get('/users/{id}/today-events', UserTodayEventsAction::class);
 
-    $app->post('/events/{id}/invitations', CreateInvitationAction::class);
-    $app->get('/invitations-list', InvitationsAction::class);
-    $app->get('/events/{id}/invitations', EventInvitationsAction::class);
-    $app->get('/invitations/{id}', InvitationAction::class);
-    $app->delete('/invitations/{id}', DeleteInvitationAction::class);
+        $app->get('/photos', PhotosAction::class);
+        $app->get('/photos/{id}', PhotoAction::class);
+        $app->get('/users/{id}/active-photo', GetActivePhotoAction::class);
+        $app->get('/users/{id}/photos', UserPhotosAction::class);
+        $app->put('/photos/{id}', UpdatePhotoAction::class);
+        $app->delete('/photos/{id}', DeletePhotoAction::class);
+        $app->post('/users/{id}/photos', AddPhotoAction::class);
+
+        $app->post('/events/{id}/invitations', CreateInvitationAction::class);
+        $app->get('/invitations-list', InvitationsAction::class);
+        $app->get('/events/{id}/invitations', EventInvitationsAction::class);
+        $app->get('/invitations/{id}', InvitationAction::class);
+        $app->delete('/invitations/{id}', DeleteInvitationAction::class);
+
+    })->add(LoginMiddleware::class);
+
 };

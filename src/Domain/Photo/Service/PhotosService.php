@@ -22,7 +22,7 @@ final class PhotosService
     /**
      * @return array|bool
      */
-    public function photos(): bool|array
+    public function photos()
     {
         return $this->repository->getAllPhotos();
     }

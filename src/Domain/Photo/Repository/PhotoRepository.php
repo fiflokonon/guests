@@ -12,7 +12,7 @@ final class PhotoRepository extends Repository
         parent::__construct($connection);
     }
 
-    public function getAllPhotos(): bool|array
+    public function getAllPhotos()
     {
         return $this->getAll('photos');
     }

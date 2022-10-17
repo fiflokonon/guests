@@ -78,7 +78,7 @@ class Repository
      * @param int $id
      * @return false|mixed|string
      */
-    public function deleteOne(string $table, int $id): mixed
+    public function deleteOne(string $table, int $id)
     {
         $sql = "DELETE FROM $table WHERE id = $id";
         $stmt = $this->connection->prepare($sql);
@@ -131,21 +131,21 @@ class Repository
         }
     }
 
-    /**
-     * @param string $token
-     * @return \Psr\Http\Message\ResponseInterface|\stdClass
-     */
+
     public function decodeToken(string $token)
     {
         try {
             return JWT::decode($token, new Key($this->secret_key, 'HS256'));
-        }catch (HttpException $exception)
+        }catch (Exception $exception)
         {
-            $statusCode = $exception->getCode();
-            $response = $this->responseFactory->createResponse();
-            $errorMessage = sprintf('%s %s', $statusCode, $response->getReasonPhrase());
-            $response->getBody()->write($errorMessage);
-            return $response;
+            if ($exception->getMessage() == 'Expired token')
+            {
+                return ['message' => "reconnection"];
+            }
+            else
+            {
+                return ['message' => $exception->getMessage()];
+            }
         }
     }
 

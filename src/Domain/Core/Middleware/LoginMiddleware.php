@@ -18,15 +18,13 @@ use function DI\string;
 class LoginMiddleware
 {
     private Error $error;
-    private ResponseFactoryInterface $responseFactory;
     private Repository $repository;
     /**
      * @param ResponseFactoryInterface $responseFactory
      * @param Error $error
      */
-    public function __construct(ResponseFactoryInterface $responseFactory, Error $error, Repository $repository)
+    public function __construct(Error $error, Repository $repository)
     {
-        $this->responseFactory = $responseFactory;
         $this->error = $error;
         $this->repository = $repository;
     }
