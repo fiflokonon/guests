@@ -8,7 +8,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class CorsMiddleware
 {
 
-    public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): \Psr\Http\Message\ResponseInterface
     {
         $response = $handler->handle($request);
         return $response
