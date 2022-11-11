@@ -60,7 +60,7 @@ return function (App $app) {
     $app->group('/api', function (RouteCollectorProxy $app)
     {
         $app->get('/users/me', GetMeAction::class);
-        $app->get('/users', UsersAction::class);
+        #$app->get('/users', UsersAction::class);
         $app->get('/users/{id}', UserAction::class);
         $app->put('/users/{id}/change-status', ChangeStatusAction::class);
         $app->put('/users/{id}/edit',EditUserAction::class);
