@@ -56,7 +56,7 @@ return function (App $app) {
     $app->post('/register', RegisterAction::class)->add(CorsMiddleware::class);
     $app->post('/login', LoginAction::class)->add(CorsMiddleware::class);
     $app->get('/api/users', UsersAction::class)->add(CorsMiddleware::class);
-    #$app->get('/api/events', EventsAction::class);
+    $app->get('/api/events', EventsAction::class);
     /** ROUTES WITH AUTHENTIFICATION  */
     $app->group('/api', function (RouteCollectorProxy $app)
     {
@@ -67,7 +67,7 @@ return function (App $app) {
         $app->put('/users/{id}/edit',EditUserAction::class);
         $app->delete('/users/{id}/delete', DeleteUserAction::class);
 
-        $app->get('/events', EventsAction::class);
+        #$app->get('/events', EventsAction::class);
         $app->get('/events/{id}', EventAction::class);
         $app->get('/users/{id}/events', EventsForUserAction::class);
         $app->post('/users/{id}/events', CreateEventAction::class);
