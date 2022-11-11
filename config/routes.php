@@ -55,7 +55,7 @@ return function (App $app) {
 
     $app->post('/register', RegisterAction::class);
     $app->post('/login', LoginAction::class);
-    $app->get('/api/users', UsersAction::class)->add(CorsMiddleware::class);
+    $app->get('/api/users', UsersAction::class);
     /** ROUTES WITH AUTHENTIFICATION  */
     $app->group('/api', function (RouteCollectorProxy $app)
     {
