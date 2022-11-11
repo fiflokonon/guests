@@ -12,6 +12,7 @@ use App\Action\User\ChangeStatusAction;
 use App\Action\User\EditUserAction;
 use App\Action\User\DeleteUserAction;
 use App\Domain\Core\Middleware\LoginMiddleware;
+use App\Domain\Core\Middleware\CorsMiddleware;
 use App\Action\User\GetMeAction;
 use App\Action\Event\EventAction;
 use App\Action\Event\EditEventAction;
@@ -92,6 +93,6 @@ return function (App $app) {
         $app->get('/invitations/{id}', InvitationAction::class);
         $app->delete('/invitations/{id}', DeleteInvitationAction::class);
 
-    })->add(LoginMiddleware::class);
+    })->add(LoginMiddleware::class)->add(CorsMiddleware::class);
 
 };
