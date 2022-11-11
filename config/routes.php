@@ -52,9 +52,8 @@ return function (App $app) {
      **************************************************/
 
     /** ROUTES WITHOUT AUTHENTIFICATION */
-
     $app->post('/register', RegisterAction::class)->add(CorsMiddleware::class);
-    $app->post('/login', LoginAction::class)->add(CorsMiddleware::class);
+    $app->get('/connexion', LoginAction::class)->add(CorsMiddleware::class);
     $app->get('/api/users', UsersAction::class)->add(CorsMiddleware::class);
     $app->get('/api/events', EventsAction::class)->add(CorsMiddleware::class);
     /** ROUTES WITH AUTHENTIFICATION  */
