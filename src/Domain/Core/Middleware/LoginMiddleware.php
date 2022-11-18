@@ -37,34 +37,35 @@ class LoginMiddleware
     public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler):ResponseInterface
     {
         //Get JWT
-        if (isset($_SERVER['HTTP_AUTHORIZATION']))
-        {
-            $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
-            $arr = explode(" ",(string($authHeader)));
-            if ($arr[0] = "Bearer")
+            if (isset($_SERVER['HTTP_AUTHORIZATION']))
             {
-                $jwt = $arr[1];
-                if ($jwt)
+                $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+                $arr = explode(" ",(string($authHeader)));
+                if ($arr[0] = "Bearer")
                 {
-                    if ($this->repository->decodeToken($jwt))
-                        return $handler->handle($request);
-                    else{
+                    $jwt = $arr[1];
+                    if ($jwt)
+                    {
+                        if ($this->repository->decodeToken($jwt))
+                            return $handler->handle($request);
+                        else{
+                            $response = new Response();
+                            return $this->error->setErrors($response, 401, 'Unauthorized');
+                        }
+                    }else
+                    {
                         $response = new Response();
-                        return $this->error->setErrors($response, 401, 'Unauthorized');
+                        return $this->error->setErrors($response, 404, 'Token not found');
                     }
-                }else
-                {
+                }
+                else{
                     $response = new Response();
-                    return $this->error->setErrors($response, 404, 'Token not found');
+                    return $this->error->setErrors($response, 401, 'Unauthorized');
                 }
             }
-            else{
-                $response = new Response();
-                return $this->error->setErrors($response, 401, 'Unauthorized');
-            }
-        }
+
         $response = new Response();
-        return $this->error->setErrors($response, 401, 'Unauthorized');
+        return $this->error->setErrors($response, 401, "Unauthorized");
     }
 
 }
