@@ -63,9 +63,11 @@ class LoginMiddleware
                     return $this->error->setErrors($response, 401, 'Unauthorized');
                 }
             }
-
-        $response = new Response();
-        return $this->error->setErrors($response, 401, "Unauthorized");
+            else
+            {
+                $response = new Response();
+                return $this->error->setErrors($response, 401, "Not Authorization header");
+            }
     }
 
 }
