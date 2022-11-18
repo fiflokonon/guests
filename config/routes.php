@@ -56,6 +56,7 @@ return function (App $app) {
     $app->post('/login', LoginAction::class)->add(CorsMiddleware::class);
     $app->get('/api/users', UsersAction::class)->add(CorsMiddleware::class);
     $app->get('/api/events', EventsAction::class)->add(CorsMiddleware::class);
+    #$app->post('/api/users/{id}/events', CreateEventAction::class)->add(LoginMiddleware::class)->add(CorsMiddleware::class);
     /** ROUTES WITH AUTHENTIFICATION  */
     $app->group('/api', function (RouteCollectorProxy $app)
     {
