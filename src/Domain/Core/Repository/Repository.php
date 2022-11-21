@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Domain\Core\Repository;
+use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Psr\Http\Message\ResponseFactoryInterface;
