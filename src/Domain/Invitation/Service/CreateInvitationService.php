@@ -45,7 +45,7 @@ final class CreateInvitationService
     public function createInvitation(int $id, array $invitation)
     {
         $invit = $this->repository->createInvitation($id, $invitation);
-        $code = $this->repository->aesEncrypt($invit);
+        $code = $this->repository->aesEncrypt(intval($invit));
         if (isset($code) && !empty($code))
         {
             return $this->generateCode($code, $invit);
