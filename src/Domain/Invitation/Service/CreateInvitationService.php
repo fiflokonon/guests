@@ -48,7 +48,7 @@ final class CreateInvitationService
         $code = $this->repository->aesEncrypt(intval($invit));
         if (isset($code) && !empty($code))
         {
-            return $this->generateCode($code, $invit);
+            return $this->generateCode($code, intval($invit));
         }
     }
 }
