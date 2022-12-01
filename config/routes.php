@@ -55,10 +55,10 @@ return function (App $app) {
      ************  ROUTES   ***************************
      **************************************************/
 
-    $app->get('/events/{id}/presences', EventPresencesAction::class);
-    $app->post('/invitations-list/{id}/presences', CreatePresenceAction::class);
-    $app->get('/invitations-list/{encrypted}/infos', InvitationInfosAction::class);
-    $app->get('/events/{id}/stats', EventStatsAction::class);
+    #$app->get('/events/{id}/presences', EventPresencesAction::class);
+    #$app->post('/invitations-list/{id}/presences', CreatePresenceAction::class);
+    #$app->get('/invitations-list/{encrypted}/infos', InvitationInfosAction::class);
+    #$app->get('/events/{id}/stats', EventStatsAction::class);
     /** ROUTES WITHOUT AUTHENTIFICATION */
     $app->post('/register', RegisterAction::class)->add(CorsMiddleware::class);
     $app->post('/login', LoginAction::class)->add(CorsMiddleware::class);
@@ -105,6 +105,7 @@ return function (App $app) {
         $app->get('/invitations-list/{encrypted}/infos', InvitationInfosAction::class);
         $app->post('/invitations-list/{id}/presences', CreatePresenceAction::class);
         $app->get('/events/{id}/presences', EventPresencesAction::class);
+        $app->get('/events/{id}/stats', EventStatsAction::class);
     })->add(LoginMiddleware::class)->add(CorsMiddleware::class);
 
 };
