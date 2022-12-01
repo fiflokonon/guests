@@ -61,6 +61,20 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
 
     }
 
+    /**
+     * @param int $id
+     * @return array|false
+     */
+    public function invitationPresenceNumber(int $id)
+    {
+        $sql = "SELECT SUM(place) FROM presences  WHERE id_invitation = $id";
+        return $this->connection->query($sql)->fetchAll();
+    }
+
+    /**
+     * @param int $id
+     * @return array
+     */
     public function invitationInfos(int $id)
     {
         $place_occupe = intval($this->invitationPresenceNumber($id)[0]['sum']);
@@ -73,16 +87,6 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
             "place_dispo" => $place_dispo,
             "place_rest" => $place_rest
         ];
-    }
-
-    /**
-     * @param int $id
-     * @return array|false
-     */
-    public function invitationPresenceNumber(int $id)
-    {
-        $sql = "SELECT SUM(place) FROM presences  WHERE id_invitation = $id";
-        return $this->connection->query($sql)->fetchAll();
     }
 
     public function getPresencesEvent(int $id)
