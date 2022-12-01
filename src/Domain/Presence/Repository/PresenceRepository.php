@@ -77,6 +77,7 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
      */
     public function invitationInfos(int $id)
     {
+        die(var_dump($this->invitationPresenceNumber($id)));
         $place_occupe = intval($this->invitationPresenceNumber($id)[0]['sum']);
         $invitation = $this->getOne('invitations', $id);
         $place_dispo = intval($invitation[0]['place']);
