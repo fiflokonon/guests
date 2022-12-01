@@ -67,7 +67,7 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
      */
     public function invitationPresenceNumber(int $id)
     {
-        $sql = "SELECT SUM(place) FROM presences  WHERE id_invitation = $id";
+        $sql = "SELECT SUM(place) as sum FROM presences  WHERE id_invitation = $id";
         return $this->connection->query($sql)->fetchAll();
     }
 
@@ -77,7 +77,7 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
      */
     public function invitationInfos(int $id)
     {
-        die(var_dump($this->invitationPresenceNumber($id)));
+        #die(var_dump($this->invitationPresenceNumber($id)));
         $place_occupe = intval($this->invitationPresenceNumber($id)[0]['sum']);
         $invitation = $this->getOne('invitations', $id);
         $place_dispo = intval($invitation[0]['place']);
