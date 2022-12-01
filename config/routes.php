@@ -38,6 +38,10 @@ use App\Action\Invitation\DeleteInvitationAction;
 use App\Action\Invitation\InvitationAction;
 use App\Action\Invitation\InvitationsAction;
 use App\Action\Invitation\EventInvitationsAction;
+use App\Action\Presence\EventPresencesAction;
+use App\Action\Presence\CreatePresenceAction;
+use App\Action\Presence\InvitationInfosAction;
+use App\Action\Presence\EventStatsAction;
 
 return function (App $app) {
     $app->get('/', function (
@@ -51,6 +55,10 @@ return function (App $app) {
      ************  ROUTES   ***************************
      **************************************************/
 
+    $app->get('/events/{id}/presences', EventPresencesAction::class);
+    $app->post('/invitations-list/{id}/presences', CreatePresenceAction::class);
+    $app->get('/invitations-list/{encrypted}/infos', InvitationInfosAction::class);
+    $app->get('/events/{id}/stats', EventStatsAction::class);
     /** ROUTES WITHOUT AUTHENTIFICATION */
     $app->post('/register', RegisterAction::class)->add(CorsMiddleware::class);
     $app->post('/login', LoginAction::class)->add(CorsMiddleware::class);
@@ -93,6 +101,10 @@ return function (App $app) {
         $app->get('/events/{id}/invitations', EventInvitationsAction::class);
         $app->get('/invitations/{id}', InvitationAction::class);
         $app->delete('/invitations/{id}', DeleteInvitationAction::class);
+
+        $app->get('/invitations-list/{encrypted}/infos', InvitationInfosAction::class);
+        $app->post('/invitations-list/{id}/presences', CreatePresenceAction::class);
+        $app->get('/events/{id}/presences', EventPresencesAction::class);
     })->add(LoginMiddleware::class)->add(CorsMiddleware::class);
 
 };

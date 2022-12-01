@@ -31,14 +31,6 @@ class Repository
     {
         $this->connection = $connection;
     }
-
-    public function createOne(string $table, $object)
-    {
-        $keys = array_keys($object);
-        foreach ($keys as  $item) {
-            $creation[$item] = $object[$item];
-        }
-    }
     /**
      * @param string $table
      * @return array|false
@@ -66,7 +58,6 @@ class Repository
         try
         {
             return $this->connection->query($sql)->fetchAll();
-
         }
         catch (\Exception $exception)
         {
@@ -152,23 +143,20 @@ class Repository
 
     public function aesEncrypt(int $data):string
     {
-//Define cipher
+        //Define cipher
         $cipher = "aes-256-cbc";
-//Generate a 256-bit encryption key
-        $encryption_key = openssl_random_pseudo_bytes(32);
-// Generate an initialization vector
-        $iv_size = openssl_cipher_iv_length($cipher);
-        $iv = openssl_random_pseudo_bytes($iv_size);
-//Data to encrypt
+        //Generate a 256-bit encryption key
+        $encryption_key = "Guests";
+        $iv = "eventtoguestsapp";
+        //Data to encrypt
         return openssl_encrypt($data, $cipher, $encryption_key, 0, $iv);
     }
 
     public function aesDecrypt(string $encrypted)
     {
         $cipher = "aes-256-cbc";
-        $encryption_key = openssl_random_pseudo_bytes(32);
-        $iv_size = openssl_cipher_iv_length($cipher);
-        $iv = openssl_random_pseudo_bytes($iv_size);
+        $encryption_key = "Guests";
+        $iv = "eventtoguestsapp";
         return openssl_decrypt($encrypted, $cipher, $encryption_key, 0, $iv);
     }
 

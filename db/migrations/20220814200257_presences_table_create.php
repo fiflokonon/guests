@@ -21,6 +21,7 @@ final class PresencesTableCreate extends AbstractMigration
         $this->table('presences')
             ->addColumn('date_de_presence', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('id_invitation', 'integer')
+            ->addColumn('place', 'integer')
             ->addForeignKey('id_invitation', 'invitations', 'id',
                 ['delete' => 'NO_ACTION', 'update' => 'CASCADE'])
             ->create();

@@ -56,8 +56,7 @@ final class InvitationRepository extends Repository
             }
             catch (HttpException $exception)
             {
-                $errorMessage = sprintf('%s %s', $statusCode, $response->getReasonPhrase());
-                return ["message" => $errorMessage];
+                return ["message" => $exception->getMessage()];
             }
         }
         else
