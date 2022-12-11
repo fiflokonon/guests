@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Domain\Presence\Repository;
-
+ini_set('display_errors', 1);
+error_reporting(E_ALL ^ E_NOTICE);
 use PDO;
 
 final class PresenceRepository extends \App\Domain\Core\Repository\Repository
@@ -39,9 +39,16 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
     public function createPresence(int $id, int $place)
     {
         $infos = $this->invitationInfos($id);
-        if ($infos['place_rest'] == 0)
+        #die(var_dump($infos));
+        if (isset($infos['response']) )
         {
-            return ['message' => "Il n'y a plus de places disponibles pour cette invitation"];
+            if (isset($infos['response']['place_rest']) && $infos['response']['place_rest'] == 0)
+            {
+                return [
+                    "success" => false,
+                    'message' => "Il n'y a plus de places disponibles pour cette invitation"];
+            }
+
         }
         elseif ($infos['place_rest'] >= $place)
         {
@@ -54,9 +61,16 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
                 return $this->invitationInfos($id);
             }
         }
+        elseif (!$infos['success'])
+        {
+            return $infos;
+        }
         else
         {
-            return ['message' => "Il n'y a pas autant de places disponibles"];
+            return [
+                "success" => false,
+                'message' => "Il n'y a pas autant de places disponibles"
+            ];
         }
 
     }
@@ -77,17 +91,45 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
      */
     public function invitationInfos(int $id)
     {
-        #die(var_dump($this->invitationPresenceNumber($id)));
         $place_occupe = intval($this->invitationPresenceNumber($id)[0]['sum']);
         $invitation = $this->getOne('invitations', $id);
-        $place_dispo = intval($invitation[0]['place']);
-        $place_rest = $place_dispo - $place_occupe;
-        return [
-            "nom_prenoms" => $invitation[0]['nom_prenoms'],
-            "place_occupe" => $place_occupe,
-            "place_dispo" => $place_dispo,
-            "place_rest" => $place_rest
-        ];
+
+        if (isset($invitation['response'][0]) && !empty($invitation['response'][0]))
+        {
+            $place_dispo = intval($invitation['response'][0]['place']);
+            $place_rest = $place_dispo - $place_occupe;
+            $event = $this->getOne('evenements', $invitation['response'][0]['id']);
+            if (isset($event['response'][0]))
+            {
+                return [
+                    "success" => true,
+                    "response" => [
+                        "event_title" => $event['response'][0]['titre'],
+                        "event_id" => $event['response'][0]['id'],
+                        "nom_prenoms" => $invitation['response'][0]['nom_prenoms'],
+                        "place_occupe" => $place_occupe,
+                        "place_dispo" => $place_dispo,
+                        "place_rest" => $place_rest
+                    ]
+                ];
+            }
+            else
+            {
+                return [
+                    "success" => false,
+                    "message" => "L'événement n'existe pas"
+                ];
+            }
+
+        }
+        else
+        {
+            return [
+              "success" => false,
+              "message" => "L'invitation n'existe pas"
+            ];
+        }
+
     }
 
     public function getPresencesEvent(int $id)
@@ -108,12 +150,16 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
             $sql3 = "SELECT DISTINCT nom_prenoms FROM invitations WHERE id = $invitation_id LIMIT 1";
             $places = $this->invitationInfos($invitation_id);
             $invitation = $this->connection->query($sql3)->fetchAll();
-            $invitation[0]['place_occupe'] = $places['place_occupe'];
-            $invitation[0]['place_dispo']  = $places['place_dispo'];
-            $invitation[0]['place_rest'] = $places['place_rest'];
+            $invitation[0]['place_occupe'] = $places['response']['place_occupe'];
+            $invitation[0]['place_dispo']  = $places['response']['place_dispo'];
+            $invitation[0]['place_rest'] = $places['response']['place_rest'];
             $list_invitations[] = $invitation[0];
         }
-        return array_unique($list_invitations, SORT_REGULAR);
+
+        return [
+            "success" => true,
+            "response" => array_unique($list_invitations, SORT_REGULAR)
+        ];
     }
 
     /**
@@ -126,16 +172,31 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
         $total_dispo = 0;
         $total_absent = 0;
         $tab_presences = $this->getPresencesEvent($id);
-        foreach ($tab_presences as $presence)
+        #die(var_dump($tab_presences));
+        if ($tab_presences)
         {
-            $total_present = $total_present + intval($presence['place_occupe']);
-            $total_dispo  = $total_dispo + intval($presence['place_dispo']);
-            $total_absent = $total_absent + intval($presence['place_rest']);
+            foreach ($tab_presences as $presence)
+            {
+                $total_present = $total_present + intval($presence['place_occupe']);
+                $total_dispo  = $total_dispo + intval($presence['place_dispo']);
+                $total_absent = $total_absent + intval($presence['place_rest']);
+            }
+            return [
+                "success" => true,
+                "response" => [
+                    "nb_presents" => $total_present,
+                    "nb_absent" => $total_absent,
+                    "nb_invites" => $total_dispo
+                ]
+            ];
         }
-        return [
-            "nb_presents" => $total_present,
-            "nb_absent" => $total_absent,
-            "nb_invites" => $total_dispo
-        ];
+        else
+        {
+            return [
+              "success" => false,
+              "message" => "Pas de statistiques disponibles pour cet événement"
+            ];
+        }
+
     }
 }

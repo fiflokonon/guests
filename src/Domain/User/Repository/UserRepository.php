@@ -42,43 +42,67 @@ final class UserRepository extends Repository
         $tel = htmlspecialchars($user['tel']);
         $mot_de_passe = password_hash( htmlspecialchars($user['mot_de_passe']), PASSWORD_DEFAULT );
         $sexe = htmlspecialchars($user['sexe']);
-        if (!empty($prenoms) && !empty($nom) && !empty($email) && !empty($tel) && !empty($sexe) && !empty($mot_de_passe))
+        $sql = "SELECT * FROM utilisateurs WHERE email = '$email' OR tel = '$tel'";
+        $get = $this->connection->query($sql)->fetchAll();
+        if (empty($get))
         {
-            $sql = "INSERT INTO utilisateurs(prenoms, nom, email, tel, sexe, mot_de_passe) VALUES (:prenoms, :nom, :email, :tel, :sexe, :mot_de_passe)";
-            $stmt = $this->connection->prepare($sql);
-            $stmt->bindValue('prenoms', $prenoms);
-            $stmt->bindValue('nom', $nom);
-            $stmt->bindValue('email', $email);
-            $stmt->bindValue('tel', $tel);
-            $stmt->bindValue('sexe', $sexe);
-            $stmt->bindValue('mot_de_passe', $mot_de_passe);
-            /****************************************
-             **** EXECUTE REGISTER REQUEST **********
-             ****************************************/
-            try
+            if (!empty($prenoms) && !empty($nom) && !empty($email) && !empty($tel) && !empty($sexe) && !empty($mot_de_passe))
             {
-                if($stmt->execute())
+                $sql = "INSERT INTO utilisateurs(prenoms, nom, email, tel, sexe, mot_de_passe) VALUES (:prenoms, :nom, :email, :tel, :sexe, :mot_de_passe)";
+                $stmt = $this->connection->prepare($sql);
+                $stmt->bindValue('prenoms', $prenoms);
+                $stmt->bindValue('nom', $nom);
+                $stmt->bindValue('email', $email);
+                $stmt->bindValue('tel', $tel);
+                $stmt->bindValue('sexe', $sexe);
+                $stmt->bindValue('mot_de_passe', $mot_de_passe);
+                /****************************************
+                 **** EXECUTE REGISTER REQUEST **********
+                 ****************************************/
+                try
                 {
-                    $id = $this->connection->lastInsertId();
-                    $sql = "SELECT * FROM utilisateurs where id=$id LIMIT 1 ";
-                    return $this->connection->query($sql)->fetchAll();
+                    if($stmt->execute())
+                    {
+                        $id = $this->connection->lastInsertId();
+                        $sql = "SELECT * FROM utilisateurs where id=$id LIMIT 1 ";
+                        return [
+                            'success' => true,
+                            'response' => $this->connection->query($sql)->fetchAll()
+                        ];
+                    }
+                    else
+                    {
+                        return [
+                            "success" => false,
+                            'message' => "An error occurs"
+                        ];
+                    }
                 }
-                else
+                catch (HttpException $exception)
                 {
-                    return ['message' => "An error occurs"];
+                    $statusCode = $exception->getCode();
+                    $errorMessage = sprintf('%s %s', $statusCode, $response->getReasonPhrase());
+                    return [
+                        "success" => false,
+                        "message" => $errorMessage];
                 }
             }
-            catch (HttpException $exception)
+            else
             {
-                $statusCode = $exception->getCode();
-                $errorMessage = sprintf('%s %s', $statusCode, $response->getReasonPhrase());
-                return ["message" => $errorMessage];
+                return [
+                    "success" => false,
+                    "message" => "Something is empty"
+                ];
             }
         }
         else
         {
-            return ["message" => "Something is empty"];
+            return [
+                "success" => false,
+                "message" => "Contact ou Email déjà associé à un compte"
+            ];
         }
+
     }
 
     /**
@@ -101,18 +125,28 @@ final class UserRepository extends Repository
                 }
                 else
                 {
-                    return ['message' => "Email ou mot de passe incorrect"];
+                    return [
+                        'success' => false,
+                        'message' => "Email ou mot de passe incorrect"
+                    ];
                 }
             }
             else
             {
-                return ['message' => "Utilisateur inexistant"];
+                return ["success" => false,
+                    'message' => "Utilisateur inexistant"];
             }
-            return ['user' => $utilisateur[0], 'token' => $token];
+            return [
+                'success' => true,
+                'user' => $utilisateur[0],
+                'token' => $token];
         }
         else
         {
-            return ["message" => "Email ou mot de passe non fourni"];
+            return [
+                "success" => false,
+                "message" => "Email ou mot de passe non fourni"
+            ];
         }
     }
 
@@ -138,7 +172,13 @@ final class UserRepository extends Repository
             $sql = "UPDATE utilisateurs SET prenoms='$prenoms', nom='$nom', email='$email', tel='$tel', mot_de_passe='$mot_de_passe' WHERE id=$id";
             $stmt = $this->connection->prepare($sql);
             return $this->exeStatement($stmt, ['success' => true]);
-
+        }
+        else
+        {
+            return [
+              "success" => false,
+              "message" => "Utilisateur Inexistant"
+            ];
         }
     }
 
@@ -161,7 +201,7 @@ final class UserRepository extends Repository
      * @param int $id
      * @return false|mixed|string
      */
-    public function supprimerUtilisateur(int $id): mixed
+    public function supprimerUtilisateur(int $id)
     {
        return $this->deleteOne('utilisateurs', $id);
     }

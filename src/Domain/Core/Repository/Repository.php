@@ -39,29 +39,39 @@ class Repository
     {
         $sql = "SELECT * FROM $table";
         try {
-            return $this->connection->query($sql)->fetchAll();
+            return [
+                "success" => true,
+                "response" => $this->connection->query($sql)->fetchAll()
+            ];
         }
         catch (\Exception $exception)
         {
-            return ['message' => $exception->getMessage()];
+            return ["success" => true,
+                'message' => $exception->getMessage()
+            ];
         }
     }
 
     /**
      * @param string $table
      * @param int $id
-     * @return array|mixed
+     * @return array
      */
     public function getOne(string $table, int $id)
     {
         $sql = "SELECT * FROM $table WHERE id = $id LIMIT 1";
         try
         {
-            return $this->connection->query($sql)->fetchAll();
+            return [
+                "success" => true,
+                'response' => $this->connection->query($sql)->fetchAll()
+            ];
         }
         catch (\Exception $exception)
         {
-            return ['message' => $exception->getMessage()];
+            return [
+                "success" => false,
+                'message' => $exception->getMessage()];
         }
     }
 
@@ -87,7 +97,10 @@ class Repository
             if ($stmt->execute()) {
                 return $response;
             } else {
-                return json_encode(['message' => "An error occurs"]);
+                return json_encode([
+                    "success" => false,
+                    'message' => "An error occurs"
+                ]);
             }
         } catch (HttpException $exception) {
             $statusCode = $exception->getCode();
@@ -132,11 +145,11 @@ class Repository
         {
             if ($exception->getMessage() == 'Expired token')
             {
-                return ['message' => "reconnection"];
+                return ["success" => false, 'message' => "reconnection"];
             }
             else
             {
-                return ['message' => $exception->getMessage()];
+                return ["success" => false, 'message' => $exception->getMessage()];
             }
         }
     }
