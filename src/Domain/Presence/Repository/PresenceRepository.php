@@ -43,28 +43,29 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
         #die(var_dump($infos));
         if (isset($infos['response']) )
         {
+            #die(var_dump("OOOOO"));
             if (isset($infos['response']['place_rest']) && $infos['response']['place_rest'] == 0)
             {
                 return [
                     "success" => false,
                     'message' => "Il n'y a plus de places disponibles pour cette invitation"];
             }
-
-        }
-        elseif ($infos['place_rest'] >= $place)
-        {
-            $sql = "INSERT INTO presences(id_invitation, place) VALUES(:id_invitation, :place)";
-            $stmt = $this->connection->prepare($sql);
-            $stmt->bindValue('id_invitation', $id);
-            $stmt->bindValue('place', $place);
-            if ($stmt->execute())
+            elseif ($infos['response']['place_rest'] >= $place)
             {
-                return $this->invitationInfos($id);
+
+                $sql = "INSERT INTO presences(id_invitation, place) VALUES(:id_invitation, :place)";
+                $stmt = $this->connection->prepare($sql);
+                $stmt->bindValue('id_invitation', $id);
+                $stmt->bindValue('place', $place);
+                if ($stmt->execute())
+                {
+                    return $this->invitationInfos($id);
+                }
             }
-        }
-        elseif (!$infos['success'])
-        {
-            return $infos;
+            elseif (!$infos['success'])
+            {
+                return $infos;
+            }
         }
         else
         {
