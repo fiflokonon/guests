@@ -1,7 +1,8 @@
 <?php
 namespace App\Domain\Presence\Repository;
 ini_set('display_errors', 1);
-error_reporting(E_ALL ^ E_NOTICE);
+error_reporting(E_ALL & ~E_WARNING);
+error_reporting(E_ALL & ~E_NOTICE);
 use PDO;
 
 final class PresenceRepository extends \App\Domain\Core\Repository\Repository
@@ -93,12 +94,12 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
     {
         $place_occupe = intval($this->invitationPresenceNumber($id)[0]['sum']);
         $invitation = $this->getOne('invitations', $id);
-
+        #die(var_dump($invitation));
         if (isset($invitation['response'][0]) && !empty($invitation['response'][0]))
         {
             $place_dispo = intval($invitation['response'][0]['place']);
             $place_rest = $place_dispo - $place_occupe;
-            $event = $this->getOne('evenements', $invitation['response'][0]['id']);
+            $event = $this->getOne('evenements', $invitation['response'][0]['id_evenement']);
             if (isset($event['response'][0]))
             {
                 return [
