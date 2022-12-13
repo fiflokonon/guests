@@ -107,7 +107,7 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
                     "success" => true,
                     "response" => [
                         "event_title" => $event['response'][0]['titre'],
-                        "event_id" => $event['response'][0]['id'],
+                        "invitation_id" => $invitation['response'][0]['id'],
                         "nom_prenoms" => $invitation['response'][0]['nom_prenoms'],
                         "place_occupe" => $place_occupe,
                         "place_dispo" => $place_dispo,
