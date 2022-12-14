@@ -173,6 +173,7 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
         $total_present = 0;
         $total_dispo = 0;
         $total_absent = 0;
+        $event = $this->getOne('evenements', $id);
         $tab_presences = $this->getPresencesEvent($id);
         #die(var_dump($tab_presences));
         if ($tab_presences['success'])
@@ -186,6 +187,7 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
             return [
                 "success" => true,
                 "response" => [
+                    "event_title" => $event['response']['title'],
                     "nb_presents" => $total_present,
                     "nb_absent" => $total_absent,
                     "nb_invites" => $total_dispo
