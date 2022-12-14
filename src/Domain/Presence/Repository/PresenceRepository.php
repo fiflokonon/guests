@@ -175,9 +175,9 @@ final class PresenceRepository extends \App\Domain\Core\Repository\Repository
         $total_absent = 0;
         $tab_presences = $this->getPresencesEvent($id);
         #die(var_dump($tab_presences));
-        if ($tab_presences)
+        if ($tab_presences['success'])
         {
-            foreach ($tab_presences as $presence)
+            foreach ($tab_presences['response'] as $presence)
             {
                 $total_present = $total_present + intval($presence['place_occupe']);
                 $total_dispo  = $total_dispo + intval($presence['place_dispo']);
